@@ -35,36 +35,36 @@
 ## Part2: [LA经典论文推荐](https://docs.qq.com/sheet/DVFl0eUlvaXpPdXZR)
 * 详细介绍可以参考标题文档
 * LA组
-  * [CoSDA-ML: Multi-Lingual Code-Switching Data Augmentation for Zero-Shot Cross-Lingual NLP](https://www.ijcai.org/proceedings/2020/0533.pdf)
-    * Libo Qin, Minheng Ni, Yue Zhang, Wanxiang Che
-    * 数据增强
+  * [From static to dynamic word representations: a survey](http://ir.hit.edu.cn/~car/papers/icmlc2020-wang.pdf)
+    * From static to dynamic word representations: a survey
+    * 词嵌入综述
   * [A Survey on Spoken Language Understanding: Recent Advances and New Frontiers](https://arxiv.org/abs/2103.03095)
     * Libo Qin, Tianbao Xie, Wanxiang Che, Ting Liu
     * SLU综述
   * [A Stack-Propagation Framework with Token-Level Intent Detection for Spoken Language Understanding](https://aclanthology.org/D19-1214/)
     * Libo Qin, Wanxiang Che, Yangming Li, Haoyang Wen, Ting Liu
     * 任务型对话
-  * [A Distributed Representation-Based Framework for Cross-Lingual Transfer Parsing](http://people.csail.mit.edu/jiang_guo/papers/jair2016-clnndep.pdf)
-    * Jiang Guo, Wanxiang Che, David Yarowsky, Haifeng Wang, Ting Liu
-    * 跨语言模型
   * [Knowledge Graph Grounded Goal Planning for Open-Domain Conversation Generation](http://ir.hit.edu.cn/~jxu/jun_files/papers/AAAI2020-Jun%20Xu-KnowHRL.pdf)
     * Jun Xu, Haifeng Wang, Zhengyu Niu, Hua Wu, Wanxiang Che
     * 知识型对话
-  * [From static to dynamic word representations: a survey](http://ir.hit.edu.cn/~car/papers/icmlc2020-wang.pdf)
-    * From static to dynamic word representations: a survey
-    * 词嵌入综述
+  * [CoSDA-ML: Multi-Lingual Code-Switching Data Augmentation for Zero-Shot Cross-Lingual NLP](https://www.ijcai.org/proceedings/2020/0533.pdf)
+    * Libo Qin, Minheng Ni, Yue Zhang, Wanxiang Che
+    * 数据增强
   * [Consistency Regularization for Cross-Lingual Fine-Tuning](https://arxiv.org/abs/2106.08226)
     * Bo Zheng, Li Dong, Shaohan Huang, Wenhui Wang, Zewen Chi, Saksham Singhal, Wanxiang Che, Ting Liu, Xia Song, Furu Wei
     * 数据增强
-  * [LayoutLMv2: Multi-modal Pre-training for Visually-Rich Document Understanding](https://arxiv.org/abs/2012.14740)
-    * Yang Xu, Yiheng Xu, Tengchao Lv, Lei Cui, Furu Wei, Guoxin Wang, Yijuan Lu, Dinei Florencio, Cha Zhang, Wanxiang Che, Min Zhang, Lidong Zhou
-    * 多模态
   * [Sequence-to-sequence data augmentation for dialogue language understanding](https://arxiv.org/abs/1807.01554)
     * Yutai Hou, Yijia Liu, Wanxiang Che, and Ting Liu
     * 数据增强
   * [Few-shot Slot Tagging with Collapsed Dependency Transfer and Label-enhanced Task-adaptive Projection Network](https://atmahou.github.io/attachments/atma's_acl2020_FewShot.pdf )
     * Yutai Hou, Wanxiang Che, Yongkui Lai, Zhihan Zhou, Yijia Liu, Han Liu and Ting Liu. 
     * 小样本
+  * [LayoutLMv2: Multi-modal Pre-training for Visually-Rich Document Understanding](https://arxiv.org/abs/2012.14740)
+    * Yang Xu, Yiheng Xu, Tengchao Lv, Lei Cui, Furu Wei, Guoxin Wang, Yijuan Lu, Dinei Florencio, Cha Zhang, Wanxiang Che, Min Zhang, Lidong Zhou
+    * 多模态
+  * [A Distributed Representation-Based Framework for Cross-Lingual Transfer Parsing](http://people.csail.mit.edu/jiang_guo/papers/jair2016-clnndep.pdf)
+    * Jiang Guo, Wanxiang Che, David Yarowsky, Haifeng Wang, Ting Liu
+    * 跨语言模型
 * 非LA组
   * Learning Method
     * [Confident Learning: Estimating Uncertainty in Dataset Labels](http://www.researchgate.net/publication/337005918_Confident_Learning_Estimating_Uncertainty_in_Dataset_Labels)
