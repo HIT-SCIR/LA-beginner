@@ -70,7 +70,7 @@
   * Learning Method
     * [Confident Learning: Estimating Uncertainty in Dataset Labels](http://www.researchgate.net/publication/337005918_Confident_Learning_Estimating_Uncertainty_in_Dataset_Labels)
       * CG Northcutt
-      * nan
+      * ICML2021(under review)
       * 比较实用，在CV上得到了验证
     * [Learning Active Learning from Data](https://papers.nips.cc/paper/2017/file/8ca8da41fe1ebc8d3ca31dc14f5fc56c-Paper.pdf)
       * Ksenia Konyushkova
@@ -82,7 +82,7 @@
       * 不光适用于图像领域，在NLP中同样有用。对比学习学得的特征在下游任务上表现很好。
     * [Neural Transfer Learning for Natural Language Processing](https://aran.library.nuigalway.ie/bitstream/handle/10379/15463/neural_transfer_learning_for_nlp.pdf?sequence=1&isAllowed=y)
       * Sebastian Ruder
-      * nan
+      * Ph.D. thesis
       * Sebastian Ruder的博士论文，第三章详细分析和比较了NLP中各种迁移学习方式
     * [Model-agnostic meta-learning for fast adaptation of deep networks](http://proceedings.mlr.press/v70/finn17a/finn17a.pdf)
       * Chelsea Finn, Pieter Abbeel, Sergey Levine
@@ -150,7 +150,7 @@
       * NAACL2018 best paper
     * [Efficient Estimation of Word Representations in Vector Space](https://arxiv.org/pdf/1301.3781.pdf)
       * Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean
-      * nan
+      * Arxiv
       * Word2Vec
     * [Language Models as Knowledge Bases?](https://arxiv.org/pdf/1909.01066.pdf)
       * Fabio Petroni, Tim Rocktäschel, Patrick Lewis, Anton Bakhtin, Yuxiang Wu, Alexander H. Miller, Sebastian Riedel
@@ -158,7 +158,7 @@
       * 预训练语言模型中的知识
     * [Language Models are Unsupervised Multitask Learners](https://d4mucfpksywv.cloudfront.net/better-language-models/language_models_are_unsupervised_multitask_learners.pdf)
       * Alec Radford, Jeff Wu, R. Child, David Luan, Dario Amodei, Ilya Sutskever 
-      * nan
+      * Arxiv
       * GPT2
     * [XLNet: Generalized Autoregressive Pretraining for Language Understanding](https://arxiv.org/abs/1906.08237)
       * Zhilin Yang, Zihang Dai, Yiming Yang, Jaime Carbonell, Ruslan Salakhutdinov, Quoc V. Le
@@ -265,7 +265,7 @@
       * 开放对话的里程碑
     * [POMDP-based Statistical Spoken Dialogue Systems: a Review](https://www.microsoft.com/en-us/research/publication/pomdp-based-statistical-spoken-dialogue-systems-a-review/)
       * Steve Young Milica Gasic Blaise Thomson Jason Williams
-      * nan
+      * IEEE xplore
       * 任务型对话的开山之作
     * [MultiWOZ -- A Large-Scale Multi-Domain Wizard-of-Oz Dataset for Task-Oriented Dialogue Modelling](https://arxiv.org/abs/1810.00278)
       * Paweł Budzianowski, Tsung-Hsien Wen, Bo-Hsiang Tseng, Iñigo Casanueva, Stefan Ultes, Osman Ramadan, Milica Gašić
@@ -278,7 +278,7 @@
   * Question Answering(QA)
     * [Neural Reading Comprehension and Beyond](https://www.cs.princeton.edu/~danqic/papers/thesis.pdf)
       * Danqi Chen 
-      * nan
+      * Ph.D. thesis
       * 陈丹琦的毕业论文，建议阅读理解、开放域问答方向人士阅读。
     * [Bidirectional Attention Flow for Machine Comprehension](https://arxiv.org/abs/1611.01603)
       * Minjoon Seo, Aniruddha Kembhavi, Ali Farhadi, Hannaneh Hajishirzi
