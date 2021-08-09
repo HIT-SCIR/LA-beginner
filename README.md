@@ -46,7 +46,7 @@
   * [Confident Learning: Estimating Uncertainty in Dataset Labels](http://www.researchgate.net/publication/337005918_Confident_Learning_Estimating_Uncertainty_in_Dataset_Labels)
   * [Learning Active Learning from Data](https://papers.nips.cc/paper/2017/file/8ca8da41fe1ebc8d3ca31dc14f5fc56c-Paper.pdf)
   * [Neural machine translation of rare words with subword units.](https://www.aclweb.org/anthology/P16-1162.pdf)
-  * [A Simple Framework for Contrastive Learning of Visual Representations]((https://static.aminer.cn/storage/pdf/arxiv/20/2002/2002.05709.pdf))
+  * [A Simple Framework for Contrastive Learning of Visual Representations](https://static.aminer.cn/storage/pdf/arxiv/20/2002/2002.05709.pdf)
   * [How Powerful are Graph Neural Networks?](https://openreview.net/forum?id=ryGs6iA5Km&noteId=rkl2Q1Qi6X&noteId=rkl2Q1Qi6X)
   * [Vocabulary Learning via Optimal Transport for Machine Translation](https://arxiv.org/abs/2012.15671)
   * [XLNet: Generalized Autoregressive Pretraining for Language Understanding](https://arxiv.org/abs/1906.08237)
