@@ -1,1 +1,3 @@
-src
+/src
+__pycache__
+model
