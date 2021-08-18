@@ -1,6 +1,6 @@
 import torch
+from multiprocessing import Pool
 from typing import List, Dict
-from torch.autograd.grad_mode import F
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
 
@@ -60,16 +60,23 @@ class Parser(torch.nn.Module):
 
 
 def hinge_loss(score: torch.FloatTensor, real_dependent: List[List[int]], length: List[int]) -> torch.FloatTensor:
-    result: torch.FloatTensor = torch.tensor(0.)
-    for i in range(len(real_dependent)):
-        current_dependent = real_dependent[i]
-        loss_dependent = mst(score[i].tolist(), current_dependent, length[i])
-        real_sum: torch.FloatTensor = sum(
-            [score[i][current_dependent[j]][j] for j in range(1, len(current_dependent))])
-        loss_sum: torch.FloatTensor = sum(
-            [score[i][loss_dependent[j]][j] for j in range(1, len(loss_dependent))])
-        result += torch.max(torch.tensor(0.), 1.0 - real_sum + loss_sum)
-    return result
+    with Pool(processes=4) as pool:
+        result: torch.FloatTensor = torch.tensor(0.)
+        all_loss_dependent = []
+        for i in range(len(real_dependent)):
+            current_dependent = real_dependent[i]
+            all_loss_dependent.append(pool.apply_async(
+                mst, (score[i].tolist(), current_dependent, length[i], )))
+        all_loss_dependent = [x.get() for x in all_loss_dependent]
+
+        for i in range(len(real_dependent)):
+            loss_dependent = all_loss_dependent[i]
+            real_sum: torch.FloatTensor = sum(
+                [score[i][current_dependent[j]][j] for j in range(1, len(current_dependent))])
+            loss_sum: torch.FloatTensor = sum(
+                [score[i][loss_dependent[j]][j] for j in range(1, len(loss_dependent))])
+            result += torch.max(torch.tensor(0.), 1.0 - real_sum + loss_sum)
+        return result
 
 
 class Edge:
