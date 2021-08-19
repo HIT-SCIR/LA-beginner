@@ -1,7 +1,8 @@
 import torch
 from multiprocessing import Pool
-from typing import List, Dict
+from typing import List
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
+from config import args
 
 
 class Parser(torch.nn.Module):
@@ -60,7 +61,7 @@ class Parser(torch.nn.Module):
 
 
 def hinge_loss(score: torch.FloatTensor, real_dependent: List[List[int]], length: List[int]) -> torch.FloatTensor:
-    with Pool(processes=4) as pool:
+    with Pool(processes=args.core_num) as pool:
         result: torch.FloatTensor = torch.tensor(0.)
         if torch.cuda.is_available():
             result = result.cuda()

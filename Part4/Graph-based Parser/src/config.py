@@ -65,6 +65,11 @@ parser.add_argument('--dropout_rate',
                     type=float,
                     default=0.3,
                     help="dropout")
+parser.add_argument('--core_num',
+                    '-cn',
+                    type=int,
+                    default=4,
+                    help="cpu core to be used")
 
 # test mode argument
 parser.add_argument('--predict_data_path',
