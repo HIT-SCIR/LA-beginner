@@ -62,6 +62,9 @@ class Parser(torch.nn.Module):
 def hinge_loss(score: torch.FloatTensor, real_dependent: List[List[int]], length: List[int]) -> torch.FloatTensor:
     with Pool(processes=4) as pool:
         result: torch.FloatTensor = torch.tensor(0.)
+        if torch.cuda.is_available():
+            result = result.cuda()
+
         all_loss_dependent = []
         for i in range(len(real_dependent)):
             current_dependent = real_dependent[i]
@@ -69,13 +72,18 @@ def hinge_loss(score: torch.FloatTensor, real_dependent: List[List[int]], length
                 mst, (score[i].tolist(), current_dependent, length[i], )))
         all_loss_dependent = [x.get() for x in all_loss_dependent]
 
+        zero = torch.tensor(0.0)
+        one = torch.tensor(1.0)
+        if torch.cuda.is_available():
+            zero = zero.cuda()
+            one = one.cuda()
         for i in range(len(real_dependent)):
             loss_dependent = all_loss_dependent[i]
             real_sum: torch.FloatTensor = sum(
                 [score[i][current_dependent[j]][j] for j in range(1, len(current_dependent))])
             loss_sum: torch.FloatTensor = sum(
                 [score[i][loss_dependent[j]][j] for j in range(1, len(loss_dependent))])
-            result += torch.max(torch.tensor(0.), 1.0 - real_sum + loss_sum)
+            result += torch.max(zero, one - real_sum + loss_sum)
         return result
 
 

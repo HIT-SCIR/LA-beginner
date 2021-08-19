@@ -15,6 +15,9 @@ class Processor(object):
         self.vocabulary = vocabulary
         self.model = model
 
+        if torch.cuda.is_available():
+            self.model = self.model.cuda()
+
     def fit(self,
             save_path: str,
             epoch: int,
@@ -34,6 +37,9 @@ class Processor(object):
                 packed_sentence = self._wrap_sentence(sentence)
                 packed_pos = self._wrap_sentence(pos)
                 length = torch.LongTensor([len(s) for s in sentence])
+                if torch.cuda.is_available():
+                    packed_sentence = packed_sentence.cuda()
+                    packed_pos = packed_pos.cuda()
 
                 # [batch_size, length, length]
                 score = self.model(packed_sentence, packed_pos, length)
@@ -59,6 +65,9 @@ class Processor(object):
             packed_sentence = self._wrap_sentence(sentence)
             packed_pos = self._wrap_sentence(pos)
             length = torch.LongTensor([len(s) for s in sentence])
+            if torch.cuda.is_available():
+                packed_sentence = packed_sentence.cuda()
+                packed_pos = packed_pos.cuda()
 
             score = self.model(packed_sentence, packed_pos, length)
             current_dependent = [mst(score[i].tolist(), dependent[i], length[i])
