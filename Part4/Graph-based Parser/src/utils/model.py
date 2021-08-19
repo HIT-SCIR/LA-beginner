@@ -1,3 +1,4 @@
+from pickle import FLOAT
 import torch
 from multiprocessing import Pool
 from typing import List
@@ -79,6 +80,7 @@ def hinge_loss(score: torch.FloatTensor, real_dependent: List[List[int]], length
             zero = zero.cuda()
             one = one.cuda()
         for i in range(len(real_dependent)):
+            current_dependent = real_dependent[i]
             loss_dependent = all_loss_dependent[i]
             real_sum: torch.FloatTensor = sum(
                 [score[i][current_dependent[j]][j] for j in range(1, len(current_dependent))])
@@ -98,6 +100,9 @@ class Edge:
         return str(self.u) + str(self.v) + str(self.w)
 
 
+ANS: float
+
+
 def mst(score: List[List[float]], real_dependent: List[int], size: int, u_remove: int = -1, v_remove: int = -1) -> List[int]:
     '''
     visited: List[int] = [False for _ in range(size)]
@@ -111,13 +116,19 @@ def mst(score: List[List[float]], real_dependent: List[int], size: int, u_remove
             if i != j and j != 0 and not(i == u_remove and j == v_remove):
                 edges.append(Edge(i, j, score[i][j]))
 
-    source_record, _ = chuliu_mst(edges, size, 0)
+    edges_record: List[int] = chuliu_mst(edges, size, 0)
+    edges_record.reverse()
+
+    source_record: List[int] = [None for _ in range(size)]
+    for i in edges_record:
+        if i == -1:
+            continue
+        e = edges[i]
+        source_record[e.v] = e.u
 
     if size <= 2:
         return source_record
 
-    for i in range(1, size):
-        assert source_record[i] >= 0
     if sum([0 if real_dependent[i] == source_record[i] else 1 for i in range(size)]) != 0:
         return source_record
 
@@ -132,38 +143,44 @@ def mst(score: List[List[float]], real_dependent: List[int], size: int, u_remove
             best_weight = current_weight
             result = current_dependent
 
-    for i in range(1, size):
-        assert result[i] >= 0
     return result
 
 
-def chuliu_mst(edges: List[Edge], size: int, root: int) -> List[int]:
-    previous: List[int] = [-1 for _ in range(size)]
+def chuliu_mst(edges: List[Edge], size: int, root: int):
+    previous: List[int] = [None for _ in range(size)]
     weight: List[float] = [float("-inf") for _ in range(size)]
-    for e in edges:
-        if e.u != e.v and e.v != root and weight[e.v] < e.w:
+    edges_record: List[Edge] = [-1 for _ in range(size)]
+    for i in range(len(edges)):
+        e = edges[i]
+        if e.u != e.v and weight[e.v] < e.w:
             previous[e.v] = e.u
             weight[e.v] = e.w
-
-    for i in range(len(edges)):
-        edges[i].w -= weight[e.v]
+            edges_record[e.v] = i
 
     circle_count = 0
     circle_idx: List[int] = [-1 for _ in range(size)]
     visited: List[int] = [-1 for _ in range(size)]
     for i in range(size):
+        global ANS
+        if i == root:
+            continue
+
+        ANS += weight[i]
+
         j = i
-        while visited[j] != i and circle_idx[j] == -1 and j != root:
+        while visited[j] == -1 and circle_idx[j] == -1 and j != root:
             visited[j] = i
             j = previous[j]
-        if j != root and circle_idx[j] == -1:
-            while circle_idx[j] != circle_count:
-                circle_idx[j] = circle_count
-                j = previous[j]
+        if j != root and visited[j] == i:
+            circle_idx[j] = circle_count
+            t = previous[j]
+            while t != j:
+                circle_idx[t] = circle_count
+                t = previous[t]
             circle_count += 1
 
     if circle_count == 0:
-        return previous, edges
+        return edges_record
 
     for i in range(size):
         if circle_idx[i] == -1:
@@ -173,13 +190,10 @@ def chuliu_mst(edges: List[Edge], size: int, root: int) -> List[int]:
     new_edges: List[Edge] = []
     for e in edges:
         new_edges.append(Edge(circle_idx[e.u], circle_idx[e.v], e.w))
+        new_edges[-1].w -= weight[e.v]
+    new_edges_record = chuliu_mst(new_edges, circle_count, circle_idx[root])
 
-    _, new_edges = chuliu_mst(new_edges, circle_count, circle_idx[root])
-    for i in range(len(edges)):
-        if new_edges[i].w == 0:
-            previous[edges[i].v] = edges[i].u
-
-    return previous, edges
+    return edges_record + new_edges_record
 
 
 if __name__ == '__main__':

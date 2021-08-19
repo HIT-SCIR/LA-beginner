@@ -34,10 +34,10 @@ class Processor(object):
 
         _, best_acc = self.predict_and_evaluate(valid_data)
         package = train_data.package(self.batch_size)
-        loss_sum = 0
         if args.show_tqdm:
             package = tqdm(package)
         for e in range(epoch):
+            loss_sum = 0
             for sentence, pos, dependent in package:
                 packed_sentence = self._wrap_sentence(sentence)
                 packed_pos = self._wrap_sentence(pos)
@@ -60,7 +60,8 @@ class Processor(object):
                 torch.save(self.model, save_path)
                 best_acc = current_acc
 
-            print(f'epoch {e}: loss is {loss_sum}, best_acc is {best_acc}')
+            print(
+                f'epoch {e}: average loss is {loss_sum / len(train_data.sentence())}, best_acc is {best_acc}')
 
     def predict_and_evaluate(self, data: DataManager) -> Tuple[List[List[str]], float]:
         self.model.eval()

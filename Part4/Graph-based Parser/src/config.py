@@ -21,12 +21,12 @@ parser.add_argument('--model_path',
 parser.add_argument('--max_line',
                     '-ml',
                     type=int,
-                    default=100,
+                    default=5,
                     help="max length to be processed")
 parser.add_argument('--batch_size',
                     '-bs',
                     type=int,
-                    default=16,
+                    default=2,
                     help="batch size")
 parser.add_argument('--embedding_dim',
                     '-ed',
@@ -42,6 +42,12 @@ parser.add_argument('--layer_num',
                     help='layer number')
 parser.add_argument('--show_tqdm', '-st', action='store_true',
                     default=False, help='whether show tqdm')
+parser.add_argument('--core_num',
+                    '-cn',
+                    type=int,
+                    default=1,
+                    help="cpu core to be used")
+
 
 # train mode argument
 parser.add_argument('--train_data_path',
@@ -58,18 +64,13 @@ parser.add_argument('--epoch', '-e', type=int, default=200, help="epoch")
 parser.add_argument('--learning_rate',
                     '-lr',
                     type=float,
-                    default=1e-3,
+                    default=1e-5,
                     help="learning rate")
 parser.add_argument('--dropout_rate',
                     '-dr',
                     type=float,
                     default=0.3,
                     help="dropout")
-parser.add_argument('--core_num',
-                    '-cn',
-                    type=int,
-                    default=4,
-                    help="cpu core to be used")
 
 # test mode argument
 parser.add_argument('--predict_data_path',
