@@ -1,3 +1,4 @@
+import os
 import torch
 import numpy
 import random
@@ -21,8 +22,11 @@ if __name__ == '__main__':
         vocabulary: Vocabulary
         vocabulary.dump(f'{args.model_path}/vocabulary.txt')
 
-        model = Parser(len(vocabulary), args.embedding_dim, args.hidden_size,
-                       args.layer_num, args.dropout_rate, vocabulary['<PAD>'])
+        if os.path.exists(f'{args.model_path}/model.pkl'):
+            model = torch.load(f'{args.model_path}/model.pkl')
+        else:
+            model = Parser(len(vocabulary), args.embedding_dim, args.hidden_size,
+                        args.layer_num, args.dropout_rate, vocabulary['<PAD>'])
 
         processor: Processor = Processor(args.batch_size, vocabulary, model)
         processor.fit(f'{args.model_path}/model.pkl',

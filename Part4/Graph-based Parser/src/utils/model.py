@@ -112,19 +112,22 @@ def mst(score: List[List[float]], real_dependent: List[int], size: int, u_remove
 
     source_record, _ = chuliu_mst(edges, size, 0)
 
+    if size <= 2:
+        return source_record
+
     for i in range(1, size):
         assert source_record[i] >= 0
     if sum([0 if real_dependent[i] == source_record[i] else 1 for i in range(size)]) != 0:
         return source_record
 
     result: List[int] = []
-    best_weight = -1
+    best_weight = None
     for i in range(1, size):
         current_dependent = mst(score, real_dependent,
                                 size, source_record[i], i)
         current_weight = sum([score[current_dependent[i]][i]
                              for i in range(len(current_dependent))])
-        if current_weight > best_weight:
+        if best_weight is None or current_weight > best_weight:
             best_weight = current_weight
             result = current_dependent
 
