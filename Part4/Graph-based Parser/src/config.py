@@ -71,6 +71,11 @@ parser.add_argument('--dropout_rate',
                     type=float,
                     default=0.3,
                     help="dropout")
+parser.add_argument('--random_rate',
+                    '-rr',
+                    type=float,
+                    default=0.1,
+                    help='rate of edges to remove of second MST')
 
 # test mode argument
 parser.add_argument('--predict_data_path',

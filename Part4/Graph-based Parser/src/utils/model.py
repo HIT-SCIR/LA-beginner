@@ -1,4 +1,5 @@
-from pickle import FLOAT
+from math import ceil
+from random import randint
 import torch
 from multiprocessing import Pool
 from typing import List
@@ -100,9 +101,6 @@ class Edge:
         return str(self.u) + str(self.v) + str(self.w)
 
 
-ANS: float
-
-
 def mst(score: List[List[float]], real_dependent: List[int], size: int, u_remove: int = -1, v_remove: int = -1) -> List[int]:
     '''
     visited: List[int] = [False for _ in range(size)]
@@ -134,7 +132,9 @@ def mst(score: List[List[float]], real_dependent: List[int], size: int, u_remove
 
     result: List[int] = []
     best_weight = None
-    for i in range(1, size):
+    edges_removed: List[int] = [randint(1, size-1)
+                                for _ in range(ceil(args.random_rate * size))]
+    for i in edges_removed:
         current_dependent = mst(score, real_dependent,
                                 size, source_record[i], i)
         current_weight = sum([score[current_dependent[i]][i]
@@ -161,11 +161,8 @@ def chuliu_mst(edges: List[Edge], size: int, root: int):
     circle_idx: List[int] = [-1 for _ in range(size)]
     visited: List[int] = [-1 for _ in range(size)]
     for i in range(size):
-        global ANS
         if i == root:
             continue
-
-        ANS += weight[i]
 
         j = i
         while visited[j] == -1 and circle_idx[j] == -1 and j != root:
