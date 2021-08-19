@@ -1,9 +1,11 @@
 from platform import processor
+from struct import pack
 import torch
 from tqdm import tqdm
 from typing import Tuple, List
 from utils.data import DataManager, Vocabulary
 from utils.model import mst, hinge_loss
+from config import args
 
 
 class Processor(object):
@@ -32,8 +34,10 @@ class Processor(object):
 
         best_acc = 0
         package = train_data.package(self.batch_size)
+        if args.show_tqdm:
+            package = tqdm(package)
         for e in range(epoch):
-            for sentence, pos, dependent in tqdm(package):
+            for sentence, pos, dependent in package:
                 packed_sentence = self._wrap_sentence(sentence)
                 packed_pos = self._wrap_sentence(pos)
                 length = torch.LongTensor([len(s) for s in sentence])
@@ -61,7 +65,9 @@ class Processor(object):
         match_count = 0
         result_dependent: List[List[str]] = []
         package = data.package(self.batch_size)
-        for sentence, pos, dependent in tqdm(package):
+        if args.show_tqdm:
+            package = tqdm(package)
+        for sentence, pos, dependent in package:
             packed_sentence = self._wrap_sentence(sentence)
             packed_pos = self._wrap_sentence(pos)
             length = torch.LongTensor([len(s) for s in sentence])

@@ -40,6 +40,8 @@ parser.add_argument('--layer_num',
                     type=int,
                     default=1,
                     help='layer number')
+parser.add_argument('--show_tqdm', '-st', action='store_true',
+                    default=False, help='whether show tqdm')
 
 # train mode argument
 parser.add_argument('--train_data_path',

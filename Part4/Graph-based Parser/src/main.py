@@ -13,8 +13,10 @@ if __name__ == '__main__':
     numpy.random.seed(args.random_seed)
 
     if args.mode == 'train':
-        train_data, vocabulary = DataManager.load(args.train_data_path, 'train', args.max_line)
-        valid_data: DataManager = DataManager.load(args.valid_data_path, 'valid', args.max_line)
+        train_data, vocabulary = DataManager.load(
+            args.train_data_path, 'train', args.max_line)
+        valid_data: DataManager = DataManager.load(
+            args.valid_data_path, 'valid', args.max_line)
         train_data: DataManager
         vocabulary: Vocabulary
         vocabulary.dump(f'{args.model_path}/vocabulary.txt')
@@ -29,7 +31,8 @@ if __name__ == '__main__':
                       train_data,
                       valid_data)
     elif args.mode == 'test':
-        test_data = DataManager.load(args.test_data_path, 'test', args.max_line)
+        test_data = DataManager.load(
+            args.test_data_path, 'test', args.max_line)
         processor = Processor.load(args.model_path)
         result, acc = Processor.predict_and_evaluate(test_data)
         print(f'evaluate on test data: {acc}')
