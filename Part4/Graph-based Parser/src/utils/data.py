@@ -18,7 +18,7 @@ class Vocabulary(object):
         with open(path, 'r') as f:
             for line in f:
                 info = line.split()
-                vocabulary[info[0]] = int(info[1])
+                vocabulary.word2idx[info[0]] = int(info[1])
                 vocabulary.word_number += 1
         return vocabulary
 

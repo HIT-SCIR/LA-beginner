@@ -36,7 +36,7 @@ if __name__ == '__main__':
                       valid_data)
     elif args.mode == 'test':
         test_data = DataManager.load(
-            args.test_data_path, 'test', args.max_line)
-        processor = Processor.load(args.model_path)
-        result, acc = Processor.predict_and_evaluate(test_data)
+            args.predict_data_path, 'test', args.max_line)
+        processor = Processor.load(args.model_path, args.batch_size)
+        result, acc = processor.predict_and_evaluate(test_data)
         print(f'evaluate on test data: {acc}')
