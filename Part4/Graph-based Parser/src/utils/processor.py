@@ -1,10 +1,9 @@
-from platform import processor
-from struct import pack
 import torch
 from tqdm import tqdm
 from typing import Tuple, List
 from utils.data import DataManager, Vocabulary
-from utils.model import mst, hinge_loss
+from utils.model import hinge_loss
+from utils.decoder import chuliu_decoder, eisner_decoder
 from config import args
 
 
@@ -64,6 +63,11 @@ class Processor(object):
                 f'epoch {e}: average loss is {loss_sum / len(train_data.sentence())}, best_acc is {best_acc}')
 
     def predict_and_evaluate(self, data: DataManager) -> Tuple[List[List[str]], float]:
+        if args.decoder_type == 'eisner':
+            decoder = eisner_decoder
+        elif args.decoder_type == 'chuliu':
+            decoder = chuliu_decoder
+
         self.model.eval()
         match_count = 0
         result_dependent: List[List[str]] = []
@@ -79,7 +83,7 @@ class Processor(object):
                 packed_pos = packed_pos.cuda()
 
             score = self.model(packed_sentence, packed_pos, length)
-            current_dependent = [mst(score[i].tolist(), dependent[i], length[i])
+            current_dependent = [decoder(score[i].tolist(), length[i], dependent[i])
                                  for i in range(len(sentence))]
 
             for i in range(len(sentence)):

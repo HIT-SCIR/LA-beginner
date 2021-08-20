@@ -1,10 +1,9 @@
-from math import ceil
-from random import randint
 import torch
 from multiprocessing import Pool
 from typing import List
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from config import args
+from utils.decoder import chuliu_decoder, eisner_decoder
 
 
 class Parser(torch.nn.Module):
@@ -63,6 +62,11 @@ class Parser(torch.nn.Module):
 
 
 def hinge_loss(score: torch.FloatTensor, real_dependent: List[List[int]], length: List[int]) -> torch.FloatTensor:
+    if args.decoder_type == 'eisner':
+        decoder = eisner_decoder
+    elif args.decoder_type == 'chuliu':
+        decoder = chuliu_decoder
+
     with Pool(processes=args.core_num) as pool:
         result: torch.FloatTensor = torch.tensor(0.)
         if torch.cuda.is_available():
@@ -72,7 +76,7 @@ def hinge_loss(score: torch.FloatTensor, real_dependent: List[List[int]], length
         for i in range(len(real_dependent)):
             current_dependent = real_dependent[i]
             all_loss_dependent.append(pool.apply_async(
-                mst, (score[i].tolist(), current_dependent, length[i], )))
+                decoder, (score[i].tolist(), length[i], current_dependent, )))
         all_loss_dependent = [x.get() for x in all_loss_dependent]
 
         zero = torch.tensor(0.0)
@@ -89,126 +93,3 @@ def hinge_loss(score: torch.FloatTensor, real_dependent: List[List[int]], length
                 [score[i][loss_dependent[j]][j] for j in range(1, len(loss_dependent))])
             result += torch.max(zero, one - real_sum + loss_sum)
         return result
-
-
-class Edge:
-    def __init__(self, u, v, w):
-        self.u = u
-        self.v = v
-        self.w = w
-
-    def __str__(self):
-        return str(self.u) + str(self.v) + str(self.w)
-
-
-def mst(score: List[List[float]], real_dependent: List[int], size: int, u_remove: int = -1, v_remove: int = -1) -> List[int]:
-    '''
-    visited: List[int] = [False for _ in range(size)]
-    weight: List[int] = [score[0][i] for i in range(size)]
-    previous: List[int] = [0 for _ in range(size)]
-    source_record: List[int] = [-1 for _ in range(size)]
-    '''
-    edges: List[Edge] = []
-    for i in range(size):
-        for j in range(size):
-            if i != j and j != 0 and not(i == u_remove and j == v_remove):
-                edges.append(Edge(i, j, score[i][j]))
-
-    edges_record: List[int] = chuliu_mst(edges, size, 0)
-    edges_record.reverse()
-
-    source_record: List[int] = [None for _ in range(size)]
-    for i in edges_record:
-        if i == -1:
-            continue
-        e = edges[i]
-        source_record[e.v] = e.u
-
-    if size <= 2:
-        return source_record
-
-    if sum([0 if real_dependent[i] == source_record[i] else 1 for i in range(size)]) != 0:
-        return source_record
-
-    result: List[int] = []
-    best_weight = None
-    edges_removed: List[int] = [randint(1, size-1)
-                                for _ in range(ceil(args.random_rate * size))]
-    for i in edges_removed:
-        current_dependent = mst(score, real_dependent,
-                                size, source_record[i], i)
-        current_weight = sum([score[current_dependent[i]][i]
-                             for i in range(len(current_dependent))])
-        if best_weight is None or current_weight > best_weight:
-            best_weight = current_weight
-            result = current_dependent
-
-    return result
-
-
-def chuliu_mst(edges: List[Edge], size: int, root: int):
-    previous: List[int] = [None for _ in range(size)]
-    weight: List[float] = [float("-inf") for _ in range(size)]
-    edges_record: List[Edge] = [-1 for _ in range(size)]
-    for i in range(len(edges)):
-        e = edges[i]
-        if e.u != e.v and weight[e.v] < e.w:
-            previous[e.v] = e.u
-            weight[e.v] = e.w
-            edges_record[e.v] = i
-
-    circle_count = 0
-    circle_idx: List[int] = [-1 for _ in range(size)]
-    visited: List[int] = [-1 for _ in range(size)]
-    for i in range(size):
-        if i == root:
-            continue
-
-        j = i
-        while visited[j] == -1 and circle_idx[j] == -1 and j != root:
-            visited[j] = i
-            j = previous[j]
-        if j != root and visited[j] == i:
-            circle_idx[j] = circle_count
-            t = previous[j]
-            while t != j:
-                circle_idx[t] = circle_count
-                t = previous[t]
-            circle_count += 1
-
-    if circle_count == 0:
-        return edges_record
-
-    for i in range(size):
-        if circle_idx[i] == -1:
-            circle_idx[i] = circle_count
-            circle_count += 1
-
-    new_edges: List[Edge] = []
-    for e in edges:
-        new_edges.append(Edge(circle_idx[e.u], circle_idx[e.v], e.w))
-        new_edges[-1].w -= weight[e.v]
-    new_edges_record = chuliu_mst(new_edges, circle_count, circle_idx[root])
-
-    return edges_record + new_edges_record
-
-
-if __name__ == '__main__':
-    size = 6
-    score: List[List[float]] = [[0 for _ in range(size)] for _ in range(size)]
-    dependent: List[int] = [i + 1 for i in range(size-1)]
-
-    score[0][1] = 2
-    score[0][3] = 3
-    score[0][2] = 0
-    score[2][1] = 1
-    score[1][2] = 1
-    score[1][3] = 2
-    score[3][2] = 1
-    score[2][4] = 3
-    score[3][5] = 4
-    score[3][4] = 3
-    score[4][5] = 6
-    dependent = [0, 3, 0, 3, 3]
-
-    print(mst(score, dependent))

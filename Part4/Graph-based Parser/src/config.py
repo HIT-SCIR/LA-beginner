@@ -47,6 +47,12 @@ parser.add_argument('--core_num',
                     type=int,
                     default=1,
                     help="cpu core to be used")
+parser.add_argument('--decoder_type',
+                    '-dt',
+                    type=str,
+                    default='eisner',
+                    choices=['eisner', 'chuliu'],
+                    help='decoder type')
 
 
 # train mode argument
