@@ -15,7 +15,7 @@ class Edge:
         return str(self.u) + str(self.v) + str(self.w)
 
 
-def chuliu_decoder(score: List[List[float]], size: int, real_dependent: List[int] = None, u_remove: int = -1, v_remove: int = -1) -> List[int]:
+def chuliu_decoder(score: List[List[float]], size: int, real_dependent: List[int] = None) -> List[int]:
     '''
     visited: List[int] = [False for _ in range(size)]
     weight: List[int] = [score[0][i] for i in range(size)]
@@ -25,7 +25,7 @@ def chuliu_decoder(score: List[List[float]], size: int, real_dependent: List[int
     edges: List[Edge] = []
     for i in range(size):
         for j in range(size):
-            if i != j and j != 0 and not(i == u_remove and j == v_remove):
+            if i != j and j != 0 and ((size <= 2 or real_dependent is None) or real_dependent[j] != i):
                 edges.append(Edge(i, j, score[i][j]))
 
     edges_record: List[int] = chuliu(edges, size, 0)
@@ -38,25 +38,7 @@ def chuliu_decoder(score: List[List[float]], size: int, real_dependent: List[int
         e = edges[i]
         source_record[e.v] = e.u
 
-    if size <= 2 or real_dependent is None:
-        return source_record
-    if sum([0 if real_dependent[i] == source_record[i] else 1 for i in range(size)]) != 0:
-        return source_record
-
-    result: List[int] = []
-    best_weight = None
-    edges_removed: List[int] = [randint(1, size-1)
-                                for _ in range(ceil(args.random_rate * size))]
-    for i in edges_removed:
-        current_dependent = chuliu_decoder(score, real_dependent,
-                                           size, source_record[i], i)
-        current_weight = sum([score[current_dependent[i]][i]
-                             for i in range(len(current_dependent))])
-        if best_weight is None or current_weight > best_weight:
-            best_weight = current_weight
-            result = current_dependent
-
-    return result
+    return source_record
 
 
 def chuliu(edges: List[Edge], size: int, root: int):
