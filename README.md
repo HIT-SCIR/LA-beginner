@@ -321,11 +321,9 @@
 * 对基于深度学习的NLP框架有一个大体的认识，为完成Part4做准备
 
 ## Part4: 项目实践
-* 任务待定
-  * 暂定NER和Graph-based Paser
-  * 基于非预训练模型（#）
-  * 基于预训练模型（#）
-  * 计算资源？
+具体项目内容及要求见相关目录
+* Sequence Labeling
+* [Graph-based Parser](./Part4/Graph-based%20Parser)
 
 ## 其他
 * 机器学习基础
