@@ -16,21 +16,35 @@ class Edge:
 
 
 def chuliu_decoder(score: List[List[float]], size: int, real_dependent: List[int] = None) -> List[int]:
-    '''
-    visited: List[int] = [False for _ in range(size)]
-    weight: List[int] = [score[0][i] for i in range(size)]
-    previous: List[int] = [0 for _ in range(size)]
-    source_record: List[int] = [-1 for _ in range(size)]
+    '''最大树形图解码器
+
+    采用朱刘算法
+    获取除真实依存树之外的最大树形图
+
+    Args:
+        score: 打分函数，有效大小为[size, size]
+        size: 节点数，含根
+        real_dependent: 真实依存树
+
+    Returns:
+        List[int]: 获取所需的最大树形图
     '''
     edges: List[Edge] = []
+    # 构造图中所有的边
+    # 删除自环
+    # 删除指向根的边
+    # 如果节点数大于2，则删除所有真实依存树中的边
     for i in range(size):
         for j in range(size):
             if i != j and j != 0 and ((size <= 2 or real_dependent is None) or real_dependent[j] != i):
                 edges.append(Edge(i, j, score[i][j]))
 
+    # 最晚获取的边是我们需要的边
+    # 所以需要reverse
     edges_record: List[int] = chuliu(edges, size, 0)
     edges_record.reverse()
 
+    # 构造返回结果
     source_record: List[int] = [None for _ in range(size)]
     for i in edges_record:
         if i == -1:
@@ -41,10 +55,20 @@ def chuliu_decoder(score: List[List[float]], size: int, real_dependent: List[int
     return source_record
 
 
-def chuliu(edges: List[Edge], size: int, root: int):
+def chuliu(edges: List[Edge], size: int, root: int) -> List[Edge]:
+    '''朱刘算法
+
+    Args:
+        edges: 所有可用边
+        size: 有效节点数
+        root: 根节点编号
+    '''
     previous: List[int] = [None for _ in range(size)]
     weight: List[float] = [float("-inf") for _ in range(size)]
     edges_record: List[Edge] = [-1 for _ in range(size)]
+
+    # 查找每个节点的最大入边
+    # 记录边编号，用于获取依存树
     for i in range(len(edges)):
         e = edges[i]
         if e.u != e.v and weight[e.v] < e.w:
@@ -52,6 +76,7 @@ def chuliu(edges: List[Edge], size: int, root: int):
             weight[e.v] = e.w
             edges_record[e.v] = i
 
+    # 查找环
     circle_count = 0
     circle_idx: List[int] = [-1 for _ in range(size)]
     visited: List[int] = [-1 for _ in range(size)]
@@ -60,9 +85,11 @@ def chuliu(edges: List[Edge], size: int, root: int):
             continue
 
         j = i
+        # 标注每个节点能够访问到的节点
         while visited[j] == -1 and circle_idx[j] == -1 and j != root:
             visited[j] = i
             j = previous[j]
+        # 存在自环，标注环编号
         if j != root and visited[j] == i:
             circle_idx[j] = circle_count
             t = previous[j]
@@ -71,27 +98,42 @@ def chuliu(edges: List[Edge], size: int, root: int):
                 t = previous[t]
             circle_count += 1
 
+    # 若没有环，则直接返回
     if circle_count == 0:
         return edges_record
 
+    # 为了便于处理，单个点视作环
     for i in range(size):
         if circle_idx[i] == -1:
             circle_idx[i] = circle_count
             circle_count += 1
 
+    # 根据环编号重新构造边集
+    # 由于需要保留边编号，所以必须保证递归时边数相同
     new_edges: List[Edge] = []
     for e in edges:
         new_edges.append(Edge(circle_idx[e.u], circle_idx[e.v], e.w))
         new_edges[-1].w -= weight[e.v]
     new_edges_record = chuliu(new_edges, circle_count, circle_idx[root])
 
+    # 按照递归的顺序记录边集
     return edges_record + new_edges_record
 
 
 # Eisner
 def eisner_decoder(scores: List[List[int]], size: int, gold: List[int] = None):
-    '''
-    Parse using Eisner's algorithm.
+    '''Eisner算法解码器
+
+    采用Eisner算法
+    获取除真实依存树之外的最大树形图
+
+    Args:
+        score: 打分函数，有效大小为[size, size]
+        size: 节点数，含根
+        real_dependent: 真实依存树
+
+    Returns:
+        List[int]: 获取所需的最大树形图
     '''
     import numpy as np
     scores = np.array(scores)
@@ -99,48 +141,47 @@ def eisner_decoder(scores: List[List[int]], size: int, gold: List[int] = None):
     if nr != nc:
         raise ValueError("scores must be a squared matrix with nw+1 rows")
 
-    N = size - 1  # Number of words (excluding root).
+    # 除根节点外节点数量
+    N = size - 1
 
-    # Initialize CKY table.
-    complete = np.zeros([N+1, N+1, 2])  # s, t, direction (right=1).
-    incomplete = np.zeros([N+1, N+1, 2])  # s, t, direction (right=1).
-    # s, t, direction (right=1).
+    # 初始化CYK表
+    # 最后一维0/1分别表示左右子树
+    complete = np.zeros([N+1, N+1, 2])
+    incomplete = np.zeros([N+1, N+1, 2])
     complete_backtrack = -np.ones([N+1, N+1, 2], dtype=int)
-    # s, t, direction (right=1).
     incomplete_backtrack = -np.ones([N+1, N+1, 2], dtype=int)
 
     incomplete[0, :, 0] -= np.inf
 
-    # Loop from smaller items to larger items.
+    # 由小到大进行遍历
     for k in range(1, N+1):
         for s in range(N-k+1):
             t = s+k
 
-            # First, create incomplete items.
-            # left tree
+            # 首先构造incomplete
+            # 左子树
             incomplete_vals0 = complete[s, s:t, 1] + complete[(s+1):(
                 t+1), t, 0] + scores[t, s] + (0.0 if gold is not None and gold[s] == t else 1.0)
             incomplete[s, t, 0] = np.max(incomplete_vals0)
             incomplete_backtrack[s, t, 0] = s + np.argmax(incomplete_vals0)
-            # right tree
+            # 右子树
             incomplete_vals1 = complete[s, s:t, 1] + complete[(s+1):(
                 t+1), t, 0] + scores[s, t] + (0.0 if gold is not None and gold[t] == s else 1.0)
             incomplete[s, t, 1] = np.max(incomplete_vals1)
             incomplete_backtrack[s, t, 1] = s + np.argmax(incomplete_vals1)
 
-            # Second, create complete items.
-            # left tree
+            # 然后构造complete
+            # 左子树
             complete_vals0 = complete[s, s:t, 0] + incomplete[s:t, t, 0]
             complete[s, t, 0] = np.max(complete_vals0)
             complete_backtrack[s, t, 0] = s + np.argmax(complete_vals0)
-            # right tree
+            # 右子树
             complete_vals1 = incomplete[s,
                                         (s+1):(t+1), 1] + complete[(s+1):(t+1), t, 1]
             complete[s, t, 1] = np.max(complete_vals1)
             complete_backtrack[s, t, 1] = s + 1 + np.argmax(complete_vals1)
 
-    value = complete[0][N][1]
-    heads = [-1 for _ in range(N+1)]  # -np.ones(N+1, dtype=int)
+    heads = [-1 for _ in range(N+1)]
     backtrack_eisner(incomplete_backtrack,
                      complete_backtrack, 0, N, 1, 1, heads)
 
@@ -200,24 +241,3 @@ def backtrack_eisner(incomplete_backtrack, complete_backtrack, s, t, direction, 
             backtrack_eisner(incomplete_backtrack,
                              complete_backtrack, r+1, t, 0, 1, heads)
             return
-
-
-if __name__ == '__main__':
-    size = 6
-    score: List[List[float]] = [[0 for _ in range(size)] for _ in range(size)]
-    dependent: List[int] = [i + 1 for i in range(size-1)]
-
-    score[0][1] = 2
-    score[0][3] = 3
-    score[0][2] = 0
-    score[2][1] = 1
-    score[1][2] = 1
-    score[1][3] = 2
-    score[3][2] = 1
-    score[2][4] = 3
-    score[3][5] = 4
-    score[3][4] = 3
-    score[4][5] = 6
-    dependent = [None, 0, 3, 0, 3, 3]
-
-    print(eisner_decoder(score, 6, dependent))
