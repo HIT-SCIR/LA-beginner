@@ -3,7 +3,7 @@ from multiprocessing import Pool
 from typing import List
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 from config import args
-from utils.decoder import chuliu_decoder, eisner_decoder
+from decoder import chuliu_decoder, eisner_decoder
 
 
 class Parser(torch.nn.Module):

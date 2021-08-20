@@ -3,8 +3,8 @@ import torch
 from tqdm import tqdm
 from typing import Tuple, List
 from utils.data import DataManager, Vocabulary
-from utils.model import hinge_loss
-from utils.decoder import chuliu_decoder, eisner_decoder
+from model import hinge_loss
+from decoder import chuliu_decoder, eisner_decoder
 from config import args
 
 

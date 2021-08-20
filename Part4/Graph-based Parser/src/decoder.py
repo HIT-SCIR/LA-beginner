@@ -1,7 +1,4 @@
-from math import ceil
-from random import randint
 from typing import List
-from config import args
 
 
 # MST

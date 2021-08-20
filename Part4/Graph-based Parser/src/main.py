@@ -3,9 +3,9 @@ import torch
 import numpy
 import random
 from config import args
-from utils.data import DataManager, Vocabulary
-from utils.model import Parser
-from utils.processor import Processor
+from utils.data import DataManager
+from model import Parser
+from processor import Processor
 
 
 if __name__ == '__main__':
