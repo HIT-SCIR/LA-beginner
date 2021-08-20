@@ -99,7 +99,7 @@ class Processor(object):
     @ staticmethod
     def load(path: str, batch_size: int) -> None:
         vocabulary = Vocabulary.load(f'{path}/vocabulary.txt')
-        model = torch.load(f'{path}/model.pkl')
+        model = torch.load(f'{path}/{args.decoder_type}.pkl')
         processor = Processor(batch_size, vocabulary, model)
         return processor
 
