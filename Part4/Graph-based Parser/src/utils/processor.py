@@ -83,7 +83,7 @@ class Processor(object):
                 packed_pos = packed_pos.cuda()
 
             score = self.model(packed_sentence, packed_pos, length)
-            current_dependent = [decoder(score[i].tolist(), length[i], [-1 for _ in range(length[i])])
+            current_dependent = [decoder(score[i].tolist(), length[i], None)
                                  for i in range(len(sentence))]
 
             for i in range(len(sentence)):
