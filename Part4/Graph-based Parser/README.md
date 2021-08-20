@@ -25,13 +25,14 @@ pip install -r requirements.txt
 ```shell
 python ./src/main.py \
        --max_line 1000000 \
-       --batch_size 32 \
+       --batch_size 64 \
        --embedding_dim 128 \
        --hidden_size 256 \
        --layer_num 2 \
        --learning_rate 1e-5 \
        --epoch 300 \
-       --core_num 3
+       --core_num 3 \
+       --decoder_type chuliu
 ```
 模型保存在`./model`文件夹中，包括词表和训练模型。
 
@@ -41,6 +42,7 @@ python ./src/main.py \
        --max_line 1000000 \
        --batch_size 32 \
        --mode test \
-       --core_num 3
+       --core_num 3 \
+       --decoder_type chuliu
 ```
 将会输出测试集上的评价指标。
