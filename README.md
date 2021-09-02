@@ -322,7 +322,7 @@
 
 ## Part4: 项目实践
 具体项目内容及要求见相关目录
-* Sequence Labeling
+* [Sequence Labeling](./Part4/Sequence_Labeling)
 * [Graph-based Parser](./Part4/Graph-based%20Parser)
 
 ## 其他
